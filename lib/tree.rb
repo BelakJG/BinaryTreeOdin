@@ -152,6 +152,8 @@ class Tree
     until node.value == value
       node = (value < node.value ? node.left_child : node.right_child)
       depth += 1
+
+      return nil if node.nil?
     end
     depth
   end
