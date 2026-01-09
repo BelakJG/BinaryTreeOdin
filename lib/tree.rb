@@ -55,9 +55,7 @@ class Tree
     return nil if node.nil?
     return node if node.value == value
 
-    left = find(value, node.left_child)
-    right = find(value, node.right_child)
-    left.nil? ? right : left
+    value < node.value ? find(value, node.left_child) : find(value, node.right_child)
   end
 
   def level_order
