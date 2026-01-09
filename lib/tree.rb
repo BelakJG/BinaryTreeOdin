@@ -23,6 +23,7 @@ class Tree
 
     node.left_child = insert(value, node.left_child) if value < node.value
     node.right_child = insert(value, node.right_child) if value > node.value
+    rebalance(node) if (find_height(node.left_child) - find_height(node.right_child)).abs > 3
     node
   end
 
