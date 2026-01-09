@@ -60,73 +60,62 @@ class Tree
     nil
   end
 
-  def level_order
-    return [] if root.nil?
+  def level_order(node = root)
+    return [] if node.nil?
 
-    queue = [root]
-    unless block_given?
-      values = []
-      until queue.empty?
-        queue.push(queue[0].left_child) unless queue[0].left_child.nil?
-        queue.push(queue[0].right_child) unless queue[0].right_child.nil?
-        values.push(queue.shift.value)
-      end
-      return values
-    end
+    queue = [node]
+    values = [] unless block_given?
 
     until queue.empty?
-      queue.push(queue[0].left_child) unless queue[0].left_child.nil?
-      queue.push(queue[0].right_child) unless queue[0].right_child.nil?
-      yield (queue.shift)
+      current_node = queue.shift
+
+      if block_given?
+        yield(current_node)
+      else
+        values << current_node.value
+      end
+
+      queue << current_node.left_child unless current_node.left_child.nil?
+      queue << current_node.right_child unless current_node.right_child.nil?
     end
+
+    values unless block_given?
   end
 
   def inorder(node = root, &block)
     return [] if node.nil?
 
-    unless block_given?
-      values = []
-      values.concat(inorder(node.left_child)) unless node.left_child.nil?
-      values << node.value
-      values.concat(inorder(node.right_child)) unless node.right_child.nil?
-      return values
+    if block_given?
+      inorder(node.left_child, &block)
+      yield(node)
+      inorder(node.right_child, &block)
+    else
+      inorder(node.left_child) + [node.value] + inorder(node.right_child)
     end
-
-    inorder(node.left_child, &block) unless node.left_child.nil?
-    block.call node
-    inorder(node.right_child, &block) unless node.right_child.nil?
   end
 
   def preorder(node = root, &block)
     return [] if node.nil?
 
-    unless block_given?
-      values = []
-      values << node.value
-      values.concat(preorder(node.left_child)) unless node.left_child.nil?
-      values.concat(preorder(node.right_child)) unless node.right_child.nil?
-      return values
+    if block_given?
+      yield(node)
+      preorder(node.left_child, &block)
+      preorder(node.right_child, &block)
+    else
+      [node.value] + preorder(node.left_child) + preorder(node.right_child)
     end
-
-    block.call node
-    preorder(node.left_child, &block) unless node.left_child.nil?
-    preorder(node.right_child, &block) unless node.right_child.nil?
   end
 
   def postorder(node = root, &block)
     return [] if node.nil?
 
-    unless block_given?
-      values = []
-      values.concat(postorder(node.left_child)) unless node.left_child.nil?
-      values.concat(postorder(node.right_child)) unless node.right_child.nil?
-      values << node.value
-      return values
+    if block_given?
+      postorder(node.left_child, &block)
+      postorder(node.right_child, &block)
+      yield(node)
+    else
+      postorder(node.left_child) + postorder(node.right_child) + [node.value]
     end
-
-    postorder(node.left_child, &block) unless node.left_child.nil?
-    postorder(node.right_child, &block) unless node.right_child.nil?
-    block.call node
   end
 
   def height(value)
