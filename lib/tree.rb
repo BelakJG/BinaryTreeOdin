@@ -52,10 +52,12 @@ class Tree
   end
 
   def find(value, node = root)
-    return nil if node.nil?
-    return node if node.value == value
+    while node
+      return node if value == node.value
 
-    value < node.value ? find(value, node.left_child) : find(value, node.right_child)
+      node = value < node.value ? node.left_child : node.right_child
+    end
+    nil
   end
 
   def level_order
