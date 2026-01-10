@@ -162,6 +162,8 @@ class Tree
   end
 
   def rebalance(node = root)
+    return if node.nil? || node.leaf?
+
     data = inorder(node)
     mid = data.length / 2
     node.value = data[mid]
